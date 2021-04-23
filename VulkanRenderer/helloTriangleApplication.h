@@ -82,6 +82,8 @@ private:
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
+	void createImageView();
+	void createGraphicsPipeline();
 	std::vector<const char*> getRequiredExtensions();
 	bool checkValidationLayerSupport();
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
