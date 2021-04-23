@@ -2,7 +2,15 @@
 
 int main() 
 {
-	HelloTriangleApplication hello;
-	hello.run();
-	return 0;
+	HelloTriangleApplication app;
+	try {
+		app.run();
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+	
+	return EXIT_FAILURE;
 }
