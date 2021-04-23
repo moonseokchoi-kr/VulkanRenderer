@@ -1,22 +1,21 @@
 #pragma once
-#define  NOMINMAX
-#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>
 
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
-#include <cstdlib>
+#include <algorithm>
 #include <vector>
+#include <cstring>
+#include <cstdlib>
+#include <cstdint>
 #include <optional>
 #include <set>
-#include <cstdint> // Necessary for UINT32_MAX
-#include <algorithm> // Necessary for std::min/std::max
-#include <fstream>
+
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
+
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
 const std::vector<const char*> validationLayers = {
@@ -35,7 +34,6 @@ const bool enableValidationLayers = true;
 
 
 struct QueueFamilyIndices {
-
 	std::optional<uint32_t> graphicsFamily;
 	std::optional<uint32_t> presentFamily;
 
@@ -49,23 +47,24 @@ struct SwapChainSupportDetails {
 	std::vector<VkSurfaceFormatKHR> formats;
 	std::vector<VkPresentModeKHR> presentModes;
 };
-
 class HelloTriangleApplication
 {
 public:
-	void run()
-	{
+	void run() {
 		initWindow();
 		initVulkan();
-		createInstance();
 		mainLoop();
 		cleanup();
 	}
+
 private:
+
+
 	void initWindow();
 	void initVulkan();
 	void setupDebugMessenger();
 	void createInstance();
+	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	void createSurface();
 	
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
@@ -83,14 +82,13 @@ private:
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-
-	void createImageView();
-
+	
+	void createImageViews();
 	void createRenderPass();
 	void createGraphicsPipeline();
-	void createFrameBuffer();
+	void createFramebuffers();
 	void createCommandPool();
-	void createCommendBuffer();
+	void createCommandBuffers();
 	void createSyncObjects();
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 
@@ -102,42 +100,39 @@ private:
 	void drawFrame();
 	void cleanup();
 	
-
 private:
-	const uint32_t WIDTH = 800;
-	const uint32_t HEIGHT = 600;
 	GLFWwindow* window;
-	
+
 	VkInstance instance;
+	VkDebugUtilsMessengerEXT debugMessenger;
 	VkSurfaceKHR surface;
 
-	VkDebugUtilsMessengerEXT debugMessenger;
-	
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device;
+
+	VkQueue graphicsQueue;
+	VkQueue presentQueue;
 
 	VkSwapchainKHR swapChain;
 	std::vector<VkImage> swapChainImages;
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
-	
 	std::vector<VkImageView> swapChainImageViews;
-
-	VkQueue graphicsQueue;
-	VkQueue presentQueue;
+	std::vector<VkFramebuffer> swapChainFramebuffers;
 
 	VkRenderPass renderPass;
 	VkPipelineLayout pipelineLayout;
 	VkPipeline graphicsPipeline;
+
 	VkCommandPool commandPool;
 	std::vector<VkCommandBuffer> commandBuffers;
-	std::vector<VkFramebuffer> swapChainFramebuffers;
 
 	std::vector<VkSemaphore> imageAvailableSemaphores;
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
 	std::vector<VkFence> imagesInFlight;
 	size_t currentFrame = 0;
+
 };
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
