@@ -77,6 +77,8 @@ private:
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 	void createSwapChain();
+	void cleanupSwapChain();
+	void recreateSwapChain();
 	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -99,6 +101,8 @@ private:
 	void mainLoop();
 	void drawFrame();
 	void cleanup();
+
+	
 	
 private:
 	GLFWwindow* window;
@@ -133,6 +137,8 @@ private:
 	std::vector<VkFence> imagesInFlight;
 	size_t currentFrame = 0;
 
+public:
+	bool framebufferResized = false;
 };
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
@@ -158,4 +164,9 @@ static std::vector<char> readFile(const std::string& filename) {
 	file.close();
 
 	return buffer;
+}
+
+static void framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+	auto app = reinterpret_cast<HelloTriangleApplication*>(glfwGetWindowUserPointer(window));
+	app->framebufferResized = true;
 }
